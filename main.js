@@ -72,7 +72,7 @@ inquirer.prompt(questions)
 				});
 			} else {
 				spinner.stop();
-				console.log('Problemas com o servidor, verifique as informações fornecidas.');
+				console.log('Problemas com o servidor, verifique as informações fornecidas e/ou a conexão com a internet.');
 				console.log('Se estiverem corretas tente usar smtpi (smtpi.site.com).');
 			}
 		});
