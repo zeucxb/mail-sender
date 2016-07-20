@@ -4,6 +4,8 @@
 
 ## Getting Started
 
+Install [NodeJS](https://nodejs.org/)
+
 Clone `mail-sender`:
 
 ```bash
