@@ -1,6 +1,6 @@
 {
   "name": "mail-sender",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A CLI Email Sender",
   "main": "main.js",
   "scripts": {
