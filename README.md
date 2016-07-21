@@ -18,6 +18,12 @@ Alter emails.js, following the pattern.
 
 Alter template.html, this is your email template.
 
+Install mail-sender dependencies:
+
+```bash
+$ [sudo] npm i
+```
+
 Run mail-sender:
 
 ```bash
