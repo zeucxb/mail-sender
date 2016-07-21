@@ -9,8 +9,6 @@ const sendEmails = require('./birl/sendEmails.js');
 
 const settingsQuestions = require('./questions/settings.js');
 
-const emails = require('./emails.json');
-
 fs.stat('./config.json', function(err, stat) {
 	if(!stat) {
 		createConfigs();

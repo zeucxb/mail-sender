@@ -3,6 +3,8 @@ const nodemailer = require('nodemailer');
 const ora = require('ora');
 const spinner = ora({ color: 'yellow', text: 'Carregando ...'});
 
+const emails = require('../emails.json');
+
 const sendEmails = function (answers) {
 	const transport = nodemailer.createTransport({
 		host: answers.host,
