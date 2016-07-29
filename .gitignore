@@ -1,2 +1,4 @@
 node_modules/*
+attachments/*
+!attachments/.gitkeep
 config.json
