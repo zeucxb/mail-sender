@@ -38,11 +38,34 @@ const sendEmails = function (answers) {
 					let j = 0;
 
 					emails.map(e => {
+						let attachments = (e.attachments || [])
+							.map(x => {
+								let attachPath = `attachments/${x}`;
+
+								try {
+									fs.statSync(attachPath).isFile();
+								} catch (err) {
+									if (err.code === 'ENOENT') {
+										console.error(`[${e.email}] Attachment '${x}' does not exist. Please fix it.`);
+										return;
+									}
+
+									throw err;
+								}
+
+								return {
+									filename: x,
+									content: fs.createReadStream(attachPath)
+								};
+							})
+							.filter(x => x);
+
 						transport.sendMail({
 							from: config.from,
 							to: e.email,
 							subject: config.subject,
-							html
+							html,
+							attachments: attachments
 						}, (err) => {
 							i++;
 
@@ -50,10 +73,10 @@ const sendEmails = function (answers) {
 								spinner.text = `Email enviado para ${e.email}`;
 								j++;
 							}
-							
+
 							if (i == emails.length) {
 								spinner.stop();
-								
+
 								console.log('%s email(s) enviados com sucesso.', j);
 							}
 						});
