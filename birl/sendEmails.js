@@ -2,10 +2,12 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 const ora = require('ora');
 const spinner = ora({ color: 'yellow', text: 'Carregando ...'});
+const jade = require('jade');
 
 const emails = require('../emails.json');
 
-const sendEmails = function (answers) {
+const sendEmails = (answers) => {
+	const templateCompile = jade.compileFile(`views/${answers.view}.jade`);
 	const transport = nodemailer.createTransport({
 		host: answers.host,
 		port: answers.port,
@@ -21,37 +23,21 @@ const sendEmails = function (answers) {
 
 	spinner.start();
 
-	transport.verify(function(error, success) {
-		if(success) {
-			spinner.text = 'Enviando...';
+	transport.verify((error, success) => {
+		if (success) {
+			spinner.text = 'Carregando...';
 
-			const config = {
-				from: `${answers.from} <${answers.email}>`,
-				subject: answers.subject
-			};
+			if (emails.length) {
+				let i = 0;
+				let j = 0;
 
-			fs.readFile('./template.html', function (err, html) {
-				if (err) throw err;
-
-				if(emails.length > 0) {
-					let i = 0;
-					let j = 0;
-
-					emails.map(e => {
-						let attachments = (e.attachments || [])
+				emails
+					.map(email => {
+						let attachments = (email.attachments || [])
 							.map(x => {
 								let attachPath = `attachments/${x}`;
 
-								try {
-									fs.statSync(attachPath).isFile();
-								} catch (err) {
-									if (err.code === 'ENOENT') {
-										console.error(`[${e.email}] Attachment '${x}' does not exist. Please fix it.`);
-										return;
-									}
-
-									throw err;
-								}
+								fs.statSync(attachPath).isFile();
 
 								return {
 									filename: x,
@@ -60,32 +46,37 @@ const sendEmails = function (answers) {
 							})
 							.filter(x => x);
 
+						return Object.assign(email, {
+							attachments
+						});
+					})
+					.forEach(email => {
+						spinner.text = `Enviando email para ${email.email}...`;
+
 						transport.sendMail({
-							from: config.from,
-							to: e.email,
-							subject: config.subject,
-							html,
-							attachments: attachments
+							from: `${answers.from} <${answers.email}>`,
+							to: email.email,
+							subject: answers.subject,
+							html: templateCompile(email),
+							attachments: email.attachments
 						}, (err) => {
 							i++;
 
 							if (!err) {
-								spinner.text = `Email enviado para ${e.email}`;
+								spinner.text = `Email enviado para ${email.email}`;
 								j++;
 							}
 
-							if (i == emails.length) {
+							if (i === emails.length) {
 								spinner.stop();
-
 								console.log('%s email(s) enviados com sucesso.', j);
 							}
 						});
 					});
-				} else {
-					spinner.stop();
-					console.log('Nenhum email na lista.');
-				}
-			});
+			} else {
+				spinner.stop();
+				console.log('Nenhum email na lista.');
+			}
 		} else {
 			spinner.stop();
 			console.log('Problemas com o servidor, verifique as informações fornecidas e/ou a conexão com a internet.');
