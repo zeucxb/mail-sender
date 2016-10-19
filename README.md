@@ -14,7 +14,7 @@ $ [sudo] git clone https://github.com/ZeuCxb/mail-sender.git
 
 ### Usage
 
-Alter emails.js, following the pattern.
+Alter emails.json, following the pattern.
 
 Alter template.html, this is your email template.
 
