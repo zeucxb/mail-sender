@@ -34,6 +34,12 @@ const questions = [
       	message: 'Qual o assunto?',
       	default: 'Assunto'
     },
+	{
+		type: 'input',
+		name: 'view',
+		message: 'Qual a view você quer utilizar?',
+		default: 'index'
+	}
 ];
 
 module.exports = questions;
